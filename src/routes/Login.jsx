@@ -25,51 +25,41 @@ function Login() {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const res = await api.post("/api/login/", {
-        username: form.username,
-        password: form.password,
-      });
+  try {
+    const res = await api.post("/api/login/", {
+      username: form.username,
+      password: form.password,
+    });
 
-      const data = res.data;
+    const data = res.data;
 
-      localStorage.setItem("user", JSON.stringify(data));
+    // Login successful — no staff/superuser checking
+    localStorage.setItem("user", JSON.stringify(data));
 
-      if (data.user.is_staff === true || data.user.is_superuser === true) {
-        await Swal.fire({
-          icon: "success",
-          title: "Login Successful",
-          text: "Welcome back!",
-          confirmButtonColor: "#2563eb",
-        });
+    await Swal.fire({
+      icon: "success",
+      title: "Login Successful",
+      text: "Welcome back!",
+      confirmButtonColor: "#2563eb",
+    });
 
-        navigate("/dashboard");
-      } else {
-        await Swal.fire({
-          icon: "warning",
-          title: "Account Pending",
-          text: "You need to wait for admin's approval to access the system",
-          confirmButtonColor: "#f59e0b",
-        });
+    navigate("/dashboard");
+  } catch (err) {
+    console.error(err);
 
-        return;
-      }
-    } catch (err) {
-      console.error(err);
-
-      Swal.fire({
-        icon: "error",
-        title: "Login Failed",
-        text: "Incorrect username or password",
-        confirmButtonColor: "#dc2626",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    Swal.fire({
+      icon: "error",
+      title: "Login Failed",
+      text: "Incorrect username or password",
+      confirmButtonColor: "#dc2626",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <motion.div

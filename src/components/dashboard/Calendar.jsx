@@ -82,10 +82,12 @@ function Calendar({
         </LocalizationProvider>
       </div>
 
-      <p className="mt-8 w-72 text-lg font-semibold text-gray-400">
-        We are showing only schedules for {course} - {year_lvl} - {section}{" "}
-        based on your profile.
-      </p>
+      {course && year_lvl && section && (
+        <p className="mt-8 w-72 text-lg font-semibold text-gray-400">
+          We are showing only schedules for {course} - {year_lvl} - {section}{" "}
+          based on your profile.
+        </p>
+      )}
     </>
   );
 }

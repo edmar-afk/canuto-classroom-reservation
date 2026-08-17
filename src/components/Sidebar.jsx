@@ -21,7 +21,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import VillaIcon from "@mui/icons-material/Villa";
 import { useNavigate } from "react-router-dom";
 import api from "../assets/api";
-import logo from "../assets/images/logo.png";
+import logo from "../assets/images/logo.jpg";
 import ProfileModal from "./ProfileModal";
 
 const drawerWidth = 240;
@@ -126,7 +126,7 @@ function Sidebar() {
           />
 
           <p className="text-md truncate">
-            {user?.student?.full_name || "Loading..."}
+            {user?.student?.full_name || "Instructor"}
           </p>
         </div>
 
