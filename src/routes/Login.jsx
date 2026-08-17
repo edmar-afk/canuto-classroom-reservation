@@ -153,13 +153,13 @@ function Login() {
           className="relative flex items-center justify-center bg-white px-8 py-12 sm:px-12"
         >
           <form onSubmit={handleLogin} className="w-full max-w-md z-10 mb-24">
-            <motion.div {...loginAnimation.title} className="mb-10">
-              <h2 className="text-4xl font-bold text-slate-900">
-                Welcome Back
+            <motion.div {...loginAnimation.title} className="mb-10 text-center">
+              <h2 className="text-4xl font-bold text-green-700">
+                Smart Scheduling System
               </h2>
 
-              <p className="mt-3 text-slate-500">
-                Sign in to continue to the Room Scheduling System.
+              <p className="relative mt-3 text-slate-500 uppercase after:content-[''] after:block after:w-14 after:h-[4px] after:bg-green-700 after:mx-auto after:mt-4">
+                For Academic Institution
               </p>
             </motion.div>
 

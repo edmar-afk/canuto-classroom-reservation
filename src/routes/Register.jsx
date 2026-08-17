@@ -217,7 +217,7 @@ function Register() {
           >
             {/* Title */}
             <motion.div {...registerAnimation.title} className="mb-8">
-              <h2 className="text-4xl font-bold text-slate-900">
+              <h2 className="text-4xl font-bold text-green-700">
                 Create Account
               </h2>
 
