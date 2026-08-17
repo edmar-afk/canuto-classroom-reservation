@@ -183,7 +183,7 @@ function Sidebar() {
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               boxSizing: "border-box",
-              background: "linear-gradient(180deg, #0d47a1 0%, #1976d2 100%)",
+              background: "green",
               color: "#fff",
               boxShadow: "4px 0 20px rgba(0,0,0,0.2)",
             },

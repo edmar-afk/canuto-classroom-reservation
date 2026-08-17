@@ -103,12 +103,12 @@ function Register() {
   return (
     <motion.div
       {...registerAnimation.page}
-      className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 flex items-center justify-center p-6"
+      className="min-h-screen bg-gradient-to-br from-slate-100 via-green-50 to-emerald-100 flex items-center justify-center p-6"
     >
       <div className="w-full max-w-7xl grid lg:grid-cols-2 overflow-hidden rounded-3xl bg-white shadow-2xl">
         <motion.div
           {...registerAnimation.leftPanel}
-          className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-blue-700 via-indigo-700 to-slate-900 p-14 text-white"
+          className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-green-700 via-emerald-700 to-slate-900 p-14 text-white"
         >
           <div>
             <div className="inline-flex items-center gap-3">
@@ -119,7 +119,7 @@ function Register() {
               <div>
                 <h3 className="font-bold text-xl">JHCSC Canuto Campus</h3>
 
-                <p className="text-blue-100 text-sm">Room Scheduling System</p>
+                <p className="text-green-100 text-sm">Room Scheduling System</p>
               </div>
             </div>
 
@@ -129,13 +129,13 @@ function Register() {
               Registration
             </h1>
 
-            <p className="mt-6 text-blue-100 leading-8 text-lg">
+            <p className="mt-6 text-green-100 leading-8 text-lg">
               Register your account to access the intelligent room scheduling
               platform of JHCSC Canuto Campus.
             </p>
           </div>
 
-          <div className="space-y-4 text-blue-100">
+          <div className="space-y-4 text-green-100">
             <div className="flex items-center gap-3">
               <div className="h-2 w-2 rounded-full bg-green-400"></div>
               Fast Student Registration
@@ -159,7 +159,7 @@ function Register() {
 
           <motion.div
             {...registerAnimation.floatingBottom}
-            className="absolute bottom-[-100px] left-[-80px] h-64 w-64 rounded-full bg-blue-300/20 blur-3xl"
+            className="absolute bottom-[-100px] left-[-80px] h-64 w-64 rounded-full bg-green-300/20 blur-3xl"
           />
         </motion.div>
 
@@ -194,7 +194,7 @@ function Register() {
                   name="full_name"
                   type="text"
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-100"
                   placeholder="Enter your full name"
                 />
               </motion.div>
@@ -211,7 +211,7 @@ function Register() {
                   <select
                     name="course"
                     onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-100"
                   >
                     <option value="">Course</option>
                     <option value="BTVTED">BTVTED</option>
@@ -228,7 +228,7 @@ function Register() {
                   <select
                     name="year_lvl"
                     onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-100"
                   >
                     <option value="">Year</option>
                     <option value="1st Year">1st Year</option>
@@ -246,7 +246,7 @@ function Register() {
                   <select
                     name="section"
                     onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-100"
                   >
                     <option value="">Section</option>
                     <option value="A">A</option>
@@ -266,7 +266,7 @@ function Register() {
                   value={form.username}
                   onChange={handleChange}
                   placeholder="Choose a username"
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-100"
                 />
               </motion.div>
 
@@ -279,7 +279,7 @@ function Register() {
                   type="file"
                   name="profile_picture"
                   onChange={handleChange}
-                  className="block w-full rounded-xl border border-slate-300 bg-slate-50 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-white hover:file:bg-blue-700"
+                  className="block w-full rounded-xl border border-slate-300 bg-slate-50 file:mr-4 file:rounded-lg file:border-0 file:bg-green-600 file:px-4 file:py-2 file:text-white hover:file:bg-green-700"
                 />
               </motion.div>
 
@@ -295,7 +295,7 @@ function Register() {
                       type={showPassword ? "text" : "password"}
                       onChange={handleChange}
                       placeholder="Password"
-                      className={`w-full rounded-xl border bg-slate-50 px-4 py-3 pr-12 outline-none transition-all focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100 ${
+                      className={`w-full rounded-xl border bg-slate-50 px-4 py-3 pr-12 outline-none transition-all focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-100 ${
                         !isPasswordValid && form.password
                           ? "border-red-500"
                           : "border-slate-300"
@@ -305,7 +305,7 @@ function Register() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-blue-600 transition"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-green-600 transition"
                     >
                       {showPassword ? (
                         <VisibilityOffIcon fontSize="small" />
@@ -321,7 +321,7 @@ function Register() {
                       type={showRepeatPassword ? "text" : "password"}
                       onChange={handleChange}
                       placeholder="Repeat Password"
-                      className={`w-full rounded-xl border bg-slate-50 px-4 py-3 pr-12 outline-none transition-all focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100 ${
+                      className={`w-full rounded-xl border bg-slate-50 px-4 py-3 pr-12 outline-none transition-all focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-100 ${
                         form.repeat_password && !isPasswordMatch
                           ? "border-red-500"
                           : "border-slate-300"
@@ -331,7 +331,7 @@ function Register() {
                     <button
                       type="button"
                       onClick={() => setShowRepeatPassword(!showRepeatPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-blue-600 transition"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-green-600 transition"
                     >
                       {showRepeatPassword ? (
                         <VisibilityOffIcon fontSize="small" />
@@ -371,7 +371,7 @@ function Register() {
               className={`mt-8 flex w-full items-center justify-center gap-2 rounded-xl py-3.5 font-semibold text-white transition-all duration-300 ${
                 loading || !isFormValid
                   ? "cursor-not-allowed bg-slate-400"
-                  : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-xl"
+                  : "bg-gradient-to-r from-green-600 to-emerald-600 hover:shadow-xl"
               }`}
             >
               {loading ? (
@@ -393,7 +393,7 @@ function Register() {
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Link
                 to="/"
-                className="flex w-full items-center justify-center rounded-xl border border-slate-300 bg-white py-3 font-semibold text-slate-700 transition hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                className="flex w-full items-center justify-center rounded-xl border border-slate-300 bg-white py-3 font-semibold text-slate-700 transition hover:border-green-500 hover:bg-green-50 hover:text-green-600"
               >
                 Back to Login
               </Link>
@@ -403,7 +403,7 @@ function Register() {
               Already have an account?
               <Link
                 to="/"
-                className="ml-2 font-semibold text-blue-600 hover:text-blue-700"
+                className="ml-2 font-semibold text-green-600 hover:text-green-700"
               >
                 Sign In
               </Link>

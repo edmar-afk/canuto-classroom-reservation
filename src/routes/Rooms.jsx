@@ -42,7 +42,7 @@ function Rooms() {
 
       <div className="-ml-8 sm:ml-64 flex-1 p-1 sm:p-6">
         <div className="flex flex-row items-center gap-2 mt-24 sm:mt-0">
-          <VillaIcon className="text-blue-500" fontSize="large" />
+          <VillaIcon className="text-green-500" fontSize="large" />
           <p className="font-bold text-2xl">Rooms</p>
         </div>
 

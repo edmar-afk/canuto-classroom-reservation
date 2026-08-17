@@ -64,12 +64,12 @@ function Login() {
   return (
     <motion.div
       {...loginAnimation.page}
-      className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 flex items-center justify-center p-6"
+      className="min-h-screen bg-gradient-to-br from-slate-100 via-green-50 to-emerald-100 flex items-center justify-center p-6"
     >
       <div className="w-full max-w-7xl grid lg:grid-cols-2 overflow-hidden rounded-3xl bg-white shadow-2xl">
         <motion.div
           {...loginAnimation.leftPanel}
-          className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-blue-700 via-indigo-700 to-slate-900 p-14 text-white"
+          className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-green-700 via-emerald-700 to-slate-900 p-14 text-white"
         >
           <div>
             <div className="inline-flex items-center gap-3">
@@ -79,7 +79,7 @@ function Login() {
 
               <div>
                 <h3 className="font-bold text-xl">JHCSC Canuto Campus</h3>
-                <p className="text-blue-100 text-sm">Room Scheduling System</p>
+                <p className="text-green-100 text-sm">Room Scheduling System</p>
               </div>
             </div>
 
@@ -89,14 +89,14 @@ function Login() {
               Scheduling
             </h1>
 
-            <p className="mt-6 text-blue-100 leading-8 text-lg">
+            <p className="mt-6 text-green-100 leading-8 text-lg">
               A modern web-based platform that simplifies classroom scheduling,
               reservation management, and administrative monitoring for JHCSC
               Canuto Campus.
             </p>
           </div>
 
-          <div className="space-y-4 text-blue-100">
+          <div className="space-y-4 text-green-100">
             <div className="flex items-center gap-3">
               <div className="h-2 w-2 rounded-full bg-green-400"></div>
               Fast Room Reservation
@@ -120,7 +120,7 @@ function Login() {
 
           <motion.div
             {...loginAnimation.floatingBottom}
-            className="absolute bottom-[-100px] left-[-80px] h-64 w-64 rounded-full bg-blue-300/20 blur-3xl"
+            className="absolute bottom-[-100px] left-[-80px] h-64 w-64 rounded-full bg-green-300/20 blur-3xl"
           />
         </motion.div>
 
@@ -152,7 +152,7 @@ function Login() {
                   onChange={handleChange}
                   required
                   placeholder="Enter your username"
-                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-800 transition-all duration-200 outline-none focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-800 transition-all duration-200 outline-none focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-100"
                 />
               </motion.div>
 
@@ -169,13 +169,13 @@ function Login() {
                     onChange={handleChange}
                     required
                     placeholder="Enter your password"
-                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 pr-12 text-slate-800 transition-all duration-200 outline-none focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 pr-12 text-slate-800 transition-all duration-200 outline-none focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-100"
                   />
 
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-blue-600 transition"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-green-600 transition"
                   >
                     {showPassword ? (
                       <VisibilityOffIcon fontSize="small" />
@@ -194,7 +194,7 @@ function Login() {
               className={`mt-8 w-full rounded-xl py-3.5 text-white font-semibold transition-all duration-300 ${
                 loading
                   ? "cursor-not-allowed bg-slate-400"
-                  : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:-translate-y-0.5 hover:shadow-xl"
+                  : "bg-gradient-to-r from-green-600 to-emerald-600 hover:-translate-y-0.5 hover:shadow-xl"
               }`}
             >
               {loading ? "Logging in..." : "Sign In"}
@@ -209,7 +209,7 @@ function Login() {
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Link
                 to="/register"
-                className="flex w-full items-center justify-center rounded-xl border border-slate-300 bg-white py-3 font-semibold text-slate-700 transition hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                className="flex w-full items-center justify-center rounded-xl border border-slate-300 bg-white py-3 font-semibold text-slate-700 transition hover:border-green-500 hover:bg-green-50 hover:text-green-600"
               >
                 Create an Account
               </Link>
@@ -219,7 +219,7 @@ function Login() {
               Don't have an account?
               <Link
                 to="/register"
-                className="ml-2 font-semibold text-blue-600 hover:text-blue-700"
+                className="ml-2 font-semibold text-green-600 hover:text-green-700"
               >
                 Register
               </Link>
