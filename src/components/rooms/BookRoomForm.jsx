@@ -183,7 +183,7 @@ function BookRoomForm({ onClose }) {
             <select
               value={selectedRoom}
               onChange={(e) => setSelectedRoom(e.target.value)}
-              className="w-full rounded-md py-3 px-4 bg-blue-100 text-blue-900 text-sm border border-gray-200"
+              className="w-full rounded-md py-3 px-4 bg-green-100 text-green-900 text-sm border border-gray-200"
             >
               <option value="">Select Room</option>
 
@@ -197,7 +197,7 @@ function BookRoomForm({ onClose }) {
             <select
               value={course}
               onChange={(e) => setCourse(e.target.value)}
-              className="w-full rounded-md py-3 px-4 bg-blue-100 text-blue-900 text-sm border border-gray-200"
+              className="w-full rounded-md py-3 px-4 bg-green-100 text-green-900 text-sm border border-gray-200"
             >
               <option value="">Select Course</option>
               <option value="BTVTED">BTVTED</option>
@@ -208,7 +208,7 @@ function BookRoomForm({ onClose }) {
             <select
               value={yearLvl}
               onChange={(e) => setYearLvl(e.target.value)}
-              className="w-full rounded-md py-3 px-4 bg-blue-100 text-blue-900 text-sm border border-gray-200"
+              className="w-full rounded-md py-3 px-4 bg-green-100 text-green-900 text-sm border border-gray-200"
             >
               <option value="">Year Level</option>
               <option value="1st Year">1st Year</option>
@@ -224,12 +224,12 @@ function BookRoomForm({ onClose }) {
               placeholder="Subject Name"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="w-full rounded-md py-3 px-4 bg-blue-100 text-blue-900 text-sm border border-gray-200"
+              className="w-full rounded-md py-3 px-4 bg-green-100 text-green-900 text-sm border border-gray-200"
             />
             <select
               value={section}
               onChange={(e) => setSection(e.target.value)}
-              className="w-full rounded-md py-3 px-4 bg-blue-100 text-blue-900 text-sm border border-gray-200"
+              className="w-full rounded-md py-3 px-4 bg-green-100 text-green-900 text-sm border border-gray-200"
             >
               <option value="">Section</option>
               <option value="A">A</option>
@@ -304,7 +304,7 @@ function BookRoomForm({ onClose }) {
             className={`text-white rounded-md text-sm font-medium px-4 py-3 w-full transition ${
               loading || isFormInvalid
                 ? "bg-red-500 cursor-not-allowed"
-                : "bg-blue-900 hover:bg-blue-800"
+                : "bg-green-900 hover:bg-green-800"
             }`}
           >
             {loading

@@ -24,7 +24,7 @@ function BookRoomModal({ fullName, userId }) {
 
       <button
         onClick={() => setOpen(true)}
-        class="bg-blue-500 cursor-pointer text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300 flex flex-row items-center gap-1"
+        class="bg-green-500 cursor-pointer text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-300 flex flex-row items-center gap-1"
       >
         <EditNoteIcon /> Set Classroom Schedule
       </button>
