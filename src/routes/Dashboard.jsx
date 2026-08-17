@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import Welcome from "../components/dashboard/Welcome";
 import Calendar from "../components/dashboard/Calendar";
 import RoomCards from "../components/dashboard/RoomCards";
 import api from "../assets/api";
+import StatsCard from "../components/dashboard/StatsCard";
+import LineChart from "../components/dashboard/LineChart";
+import RecentActivity from "../components/dashboard/RecentActivity";
 
 function Dashboard() {
   const [data, setData] = useState(null);
@@ -32,45 +34,81 @@ function Dashboard() {
     fetchProfile();
   }, []);
 
-  const course = data?.student?.course;
-  const year_lvl = data?.student?.year_lvl;
-  const section = data?.student?.section;
-
   return (
-    <div className="flex flex-row min-h-screen">
+    <div className="min-h-screen bg-slate-50">
       <Sidebar user={data} />
 
-      <div className="-ml-8 sm:ml-64 flex-1 p-1 sm:p-6">
-        <div className="flex flex-row items-center gap-2 mt-24 sm:mt-0">
-          <DashboardIcon className="text-green-500" fontSize="large" />
-          <p className="font-bold text-2xl">Dashboard</p>
-        </div>
+      {/* Main Content */}
+      <main className="min-h-screen sm:ml-64">
+        <div className="px-4 pb-8 pt-24 sm:px-6 sm:pt-6 lg:px-10">
+          {/* Dashboard Header */}
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#173B2F] shadow-sm">
+                  <DashboardIcon className="text-white" sx={{ fontSize: 21 }} />
+                </div>
 
-        <div className="mt-4 sm:mt-14 grid grid-cols-1 lg:grid-cols-[70%_30%] gap-12">
-          <div>
-            <Welcome />
+                <div>
+                  <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+                    Dashboard
+                  </h1>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 sm:gap-4 mt-4">
-              <RoomCards
-                course={course}
-                year_lvl={year_lvl}
-                section={section}
-                selectedDate={selectedDate}
-              />
+                  <p className="mt-0.5 text-xs text-slate-400 sm:text-sm">
+                    Academic scheduling overview
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Current Date */}
+            <div className="hidden items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-2.5 shadow-sm sm:flex">
+              <div className="h-2 w-2 rounded-full bg-emerald-500" />
+
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                  Today
+                </p>
+
+                <p className="text-sm font-semibold text-slate-700">
+                  {new Date().toLocaleDateString("en-US", {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="relative sm:sticky sm:top-6 sm:self-start">
-            <Calendar
-              course={course}
-              year_lvl={year_lvl}
-              section={section}
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-            />
+          {/* Welcome */}
+          <section>
+            <StatsCard />
+            <div className="mt-8 grid grid-cols-1 items-stretch gap-6 xl:grid-cols-[1.6fr_1fr]">
+              <LineChart />
+
+              <RecentActivity />
+            </div>
+          </section>
+
+          {/* Future Dashboard Content */}
+          {/*
+          <div className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
+            <div className="xl:col-span-2">
+              <Calendar
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+              />
+            </div>
+
+            <div>
+              <RoomCards />
+            </div>
           </div>
+          */}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

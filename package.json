@@ -32,6 +32,7 @@
     "react-router-dom": "^7.6.2",
     "react-signature-pad-wrapper": "^4.1.1",
     "react-tooltip": "^5.29.1",
+    "recharts": "^3.10.1",
     "signature_pad": "^5.0.10",
     "simple-datatables": "^10.0.0",
     "sweetalert2": "^11.22.0"
