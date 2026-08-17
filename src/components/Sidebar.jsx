@@ -75,7 +75,7 @@ function Sidebar() {
     <>
       <Box sx={{ p: 3 }}>
         <Typography variant="h6" fontWeight="bold">
-          ZDSPGC Room Reservation
+          JHCSC Room Reservation
         </Typography>
       </Box>
 
