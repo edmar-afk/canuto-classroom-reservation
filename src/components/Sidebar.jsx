@@ -1,25 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
   LayoutDashboard,
-  Database,
-  CalendarDays,
-  FileText,
-  TriangleAlert,
   CalendarCheck,
-  Users,
   Settings,
   LogOut,
-  ChevronDown,
   Menu,
   X,
-  Building2,
-  GraduationCap,
-  BookOpen,
   UserRound,
-  School,
 } from "lucide-react";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../assets/api";
 
 import logo from "../assets/images/logo.jpg";
@@ -32,7 +22,6 @@ function Sidebar() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState(null);
-
   const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
@@ -61,16 +50,14 @@ function Sidebar() {
   }, []);
 
   const isSuperUser =
-    user?.user?.is_superuser === true || user?.user?.is_superuser === "true";
+    user?.user?.is_superuser === true ||
+    user?.user?.is_superuser === "true";
 
   const currentPath = location.pathname;
 
-  const isActive = (path) => {
-    return currentPath === path;
-  };
+  const isActive = (path) => currentPath === path;
 
-  const navigateTo = (path) => {
-    navigate(path);
+  const closeMobileMenu = () => {
     setMobileOpen(false);
   };
 
@@ -88,12 +75,9 @@ function Sidebar() {
 
   const sidebarContent = (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#246B4F] text-white">
-      {/* ========================================= */}
       {/* HEADER */}
-      {/* ========================================= */}
       <div className="relative z-20 px-5 pb-5 pt-5">
         <div className="flex items-center gap-3">
-          {/* Logo */}
           <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-white/80 bg-white shadow-sm">
             <img
               src={logo}
@@ -102,7 +86,6 @@ function Sidebar() {
             />
           </div>
 
-          {/* Brand */}
           <div className="min-w-0">
             <h1 className="text-[15px] font-bold leading-tight tracking-tight text-white">
               Smart Scheduling
@@ -115,83 +98,74 @@ function Sidebar() {
         </div>
       </div>
 
-      {/* ========================================= */}
       {/* NAVIGATION */}
-      {/* ========================================= */}
       <nav className="relative z-20 flex-1 overflow-y-auto px-3 pb-32 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10">
         <div className="space-y-1">
           {/* Dashboard */}
-          <button
-            onClick={() => navigateTo("/dashboard")}
+          <Link
+            to="/dashboard"
+            onClick={closeMobileMenu}
             className={menuItemClass(isActive("/dashboard"))}
           >
-            <LayoutDashboard size={21} strokeWidth={1.8} className="shrink-0" />
-
+            <LayoutDashboard
+              size={21}
+              strokeWidth={1.8}
+              className="shrink-0"
+            />
             <span>Dashboard</span>
-          </button>
+          </Link>
 
           {/* Schedules */}
-          <button
-            onClick={() => navigateTo("/calendar")}
+          <Link
+            to="/calendar"
+            onClick={closeMobileMenu}
             className={menuItemClass(isActive("/calendar"))}
           >
-            <CalendarCheck size={21} strokeWidth={1.8} className="shrink-0" />
-
+            <CalendarCheck
+              size={21}
+              strokeWidth={1.8}
+              className="shrink-0"
+            />
             <span>Schedules</span>
-          </button>
-
-          {/* Conflict Monitoring */}
-          {/* <button
-            onClick={() => navigateTo("/conflicts")}
-            className={menuItemClass(isActive("/conflicts"))}
-          >
-            <TriangleAlert size={21} strokeWidth={1.8} className="shrink-0" />
-
-            <span>Conflict Reports</span>
-          </button> */}
+          </Link>
 
           {/* Users */}
-          <button
-            onClick={() => navigateTo("/users")}
+          <Link
+            to="/users"
+            onClick={closeMobileMenu}
             className={menuItemClass(isActive("/users"))}
           >
             <UserRound size={21} strokeWidth={1.8} className="shrink-0" />
-
             <span>Users</span>
-          </button>
+          </Link>
 
           {/* Settings */}
-          <button
-            onClick={() => navigateTo("/settings")}
+          <Link
+            to="/settings"
+            onClick={closeMobileMenu}
             className={menuItemClass(isActive("/settings"))}
           >
             <Settings size={21} strokeWidth={1.8} className="shrink-0" />
-
             <span>Settings</span>
-          </button>
+          </Link>
         </div>
       </nav>
 
-      {/* ========================================= */}
       {/* SCHOOL FOOTER IMAGE */}
-      {/* ========================================= */}
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 h-48 overflow-hidden">
         <img
           src={footerImg}
           alt=""
-          className="absolute bottom-0 left-0 h-full w-full object-cover object-bottom "
+          className="absolute bottom-0 left-0 h-full w-full object-cover object-bottom"
         />
 
-        {/* Fade gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#174D3A] via-[#246B4F]/70 to-transparent" />
       </div>
 
-      {/* ========================================= */}
       {/* USER FOOTER */}
-      {/* ========================================= */}
       <div className="relative z-30 border-t border-white/10 bg-[#1D5B43]/95 px-5 py-4 backdrop-blur-sm">
         <div className="flex items-center gap-3">
-          {/* Profile */}
+          {/* Profile Picture */}
           <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-white bg-white">
             <img
               src={
@@ -204,8 +178,9 @@ function Sidebar() {
             />
           </div>
 
-          {/* User Info */}
+          {/* User Information */}
           <button
+            type="button"
             onClick={() => setProfileOpen(true)}
             className="min-w-0 flex-1 text-left"
           >
@@ -222,6 +197,7 @@ function Sidebar() {
 
           {/* Logout */}
           <button
+            type="button"
             onClick={handleLogout}
             title="Logout"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white/60 transition-colors hover:bg-white/10 hover:text-white"
@@ -235,12 +211,12 @@ function Sidebar() {
 
   return (
     <>
-      {/* ========================================= */}
       {/* MOBILE TOP BAR */}
-      {/* ========================================= */}
       <div className="fixed left-0 right-0 top-0 z-[1200] flex h-16 items-center bg-[#246B4F] px-4 shadow-md md:hidden">
         <button
+          type="button"
           onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
           className="flex h-10 w-10 items-center justify-center rounded-xl text-white transition-colors hover:bg-white/10"
         >
           <Menu size={24} />
@@ -248,40 +224,41 @@ function Sidebar() {
 
         <div className="ml-3 flex items-center gap-2">
           <div className="h-9 w-9 overflow-hidden rounded-full border border-white bg-white">
-            <img src={logo} alt="Logo" className="h-full w-full object-cover" />
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-full w-full object-cover"
+            />
           </div>
 
           <div>
             <p className="text-sm font-bold leading-tight text-white">
               Smart Scheduling
             </p>
-
             <p className="text-[11px] text-white/70">System</p>
           </div>
         </div>
       </div>
 
-      {/* ========================================= */}
       {/* MOBILE OVERLAY */}
-      {/* ========================================= */}
       {mobileOpen && (
         <div
           className="fixed inset-0 z-[1300] bg-black/40 backdrop-blur-[2px] md:hidden"
-          onClick={() => setMobileOpen(false)}
+          onClick={closeMobileMenu}
         />
       )}
 
-      {/* ========================================= */}
       {/* SIDEBAR */}
-      {/* ========================================= */}
       <aside
         className={`fixed bottom-0 left-0 top-0 z-[1400] w-[240px] shadow-2xl transition-transform duration-300 ease-out md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Mobile Close */}
+        {/* MOBILE CLOSE */}
         <button
-          onClick={() => setMobileOpen(false)}
+          type="button"
+          onClick={closeMobileMenu}
+          aria-label="Close menu"
           className="absolute right-3 top-3 z-50 flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/20 md:hidden"
         >
           <X size={19} />
@@ -290,7 +267,7 @@ function Sidebar() {
         {sidebarContent}
       </aside>
 
-      {/* Profile Modal */}
+      {/* PROFILE MODAL */}
       <ProfileModal
         open={profileOpen}
         onClose={() => setProfileOpen(false)}
