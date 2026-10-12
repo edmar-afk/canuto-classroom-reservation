@@ -12,7 +12,7 @@ import registerAnimation from "../utils/registerAnimation";
 
 import jhAdminImg from "../assets/images/admin.jpg";
 import logo from "../assets/images/logo.jpg";
-import schoolDraw from "../assets/images/schooldraw.webp";
+import schoolDraw from "../assets/images/schooldraw.png";
 
 import {
   User,

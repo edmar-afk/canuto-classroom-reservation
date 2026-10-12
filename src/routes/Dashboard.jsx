@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import DashboardIcon from "@mui/icons-material/Dashboard";

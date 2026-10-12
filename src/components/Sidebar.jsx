@@ -23,7 +23,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import api from "../assets/api";
 
 import logo from "../assets/images/logo.jpg";
-import footerImg from "../assets/images/schooldraw.webp";
+import footerImg from "../assets/images/schooldraw.png";
 import ProfileModal from "./ProfileModal";
 
 function Sidebar() {
@@ -34,8 +34,6 @@ function Sidebar() {
   const [user, setUser] = useState(null);
 
   const [profileOpen, setProfileOpen] = useState(false);
-
-  const [schedulingOpen, setSchedulingOpen] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -88,13 +86,6 @@ function Sidebar() {
         : "text-white/85 hover:bg-white/10 hover:text-white"
     }`;
 
-  const subMenuClass = (active = false) =>
-    `flex w-full items-center gap-3 rounded-lg px-4 py-2.5 pl-12 text-sm transition-all duration-200 ${
-      active
-        ? "bg-white/10 font-semibold text-white"
-        : "text-white/65 hover:bg-white/5 hover:text-white"
-    }`;
-
   const sidebarContent = (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#246B4F] text-white">
       {/* ========================================= */}
@@ -139,80 +130,25 @@ function Sidebar() {
             <span>Dashboard</span>
           </button>
 
-         
-          {/* ===================================== */}
-          {/* SCHEDULING */}
-          {/* ===================================== */}
-          <button
-            onClick={() => setSchedulingOpen(!schedulingOpen)}
-            className={menuItemClass(currentPath.startsWith("/scheduling"))}
-          >
-            <CalendarDays size={21} strokeWidth={1.8} className="shrink-0" />
-
-            <span className="flex-1 text-left">Scheduling</span>
-
-            <ChevronDown
-              size={17}
-              className={`transition-transform duration-200 ${
-                schedulingOpen ? "rotate-180" : ""
-              }`}
-            />
-          </button>
-
-          {/* Scheduling Submenu */}
-          <div
-            className={`overflow-hidden transition-all duration-300 ${
-              schedulingOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-            }`}
-          >
-            <div className="mt-1 space-y-0.5">
-              <button
-                onClick={() => navigateTo("/scheduling")}
-                className={subMenuClass(isActive("/scheduling"))}
-              >
-                <CalendarCheck size={17} />
-                <span>Schedules</span>
-              </button>
-
-              <button
-                onClick={() => navigateTo("/calendar")}
-                className={subMenuClass(isActive("/calendar"))}
-              >
-                <CalendarDays size={17} />
-                <span>Calendar</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Reports */}
-          <button
-            onClick={() => navigateTo("/reports")}
-            className={menuItemClass(isActive("/reports"))}
-          >
-            <FileText size={21} strokeWidth={1.8} className="shrink-0" />
-
-            <span>Reports</span>
-          </button>
-
-          {/* Conflict Monitoring */}
-          <button
-            onClick={() => navigateTo("/conflicts")}
-            className={menuItemClass(isActive("/conflicts"))}
-          >
-            <TriangleAlert size={21} strokeWidth={1.8} className="shrink-0" />
-
-            <span>Conflict Monitoring</span>
-          </button>
-
-          {/* Calendar View */}
+          {/* Schedules */}
           <button
             onClick={() => navigateTo("/calendar")}
             className={menuItemClass(isActive("/calendar"))}
           >
             <CalendarCheck size={21} strokeWidth={1.8} className="shrink-0" />
 
-            <span>Calendar View</span>
+            <span>Schedules</span>
           </button>
+
+          {/* Conflict Monitoring */}
+          {/* <button
+            onClick={() => navigateTo("/conflicts")}
+            className={menuItemClass(isActive("/conflicts"))}
+          >
+            <TriangleAlert size={21} strokeWidth={1.8} className="shrink-0" />
+
+            <span>Conflict Reports</span>
+          </button> */}
 
           {/* Users */}
           <button
@@ -243,7 +179,7 @@ function Sidebar() {
         <img
           src={footerImg}
           alt=""
-          className="absolute bottom-0 left-0 h-full w-full object-cover object-bottom opacity-20"
+          className="absolute bottom-0 left-0 h-full w-full object-cover object-bottom "
         />
 
         {/* Fade gradient */}

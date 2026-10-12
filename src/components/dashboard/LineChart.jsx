@@ -196,7 +196,7 @@ function LineChart() {
 
             <span>Scheduled Classes</span>
           </button>
-
+{/* 
           <button
             onClick={() => setView("available")}
             className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold transition-all duration-300 sm:px-5 ${
@@ -208,7 +208,7 @@ function LineChart() {
             <DoorOpen size={15} />
 
             <span>Available Slots</span>
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

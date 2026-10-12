@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import loginAnimation from "../utils/loginAnimation";
 import jhAdminImg from "../assets/images/admin.jpg";
 import logo from "../assets/images/logo.jpg";
-import schoolDraw from "../assets/images/schooldraw.webp";
+import schoolDraw from "../assets/images/schooldraw.png";
 import { User, LockKeyhole } from "lucide-react";
 function Login() {
   const navigate = useNavigate();

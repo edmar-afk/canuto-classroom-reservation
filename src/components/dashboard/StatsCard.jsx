@@ -42,24 +42,24 @@ function CountUp({ end, duration = 900 }) {
 
 function StatsCard() {
   const stats = [
-    {
-      title: "Academic Programs",
-      value: 12,
-      icon: GraduationCap,
-      type: "normal",
-    },
+    // {
+    //   title: "Academic Programs",
+    //   value: 12,
+    //   icon: GraduationCap,
+    //   type: "normal",
+    // },
     {
       title: "Instructors",
       value: 85,
       icon: UsersRound,
       type: "normal",
     },
-    {
-      title: "Subjects",
-      value: 156,
-      icon: BookOpen,
-      type: "normal",
-    },
+    // {
+    //   title: "Subjects",
+    //   value: 156,
+    //   icon: BookOpen,
+    //   type: "normal",
+    // },
     {
       title: "Classrooms",
       value: 28,
@@ -78,18 +78,18 @@ function StatsCard() {
       icon: CalendarDays,
       type: "normal",
     },
-    {
-      title: "Conflicts",
-      value: 3,
-      icon: TriangleAlert,
-      type: "warning",
-    },
-    {
-      title: "Reports",
-      value: 18,
-      icon: FileText,
-      type: "normal",
-    },
+    // {
+    //   title: "Conflicts",
+    //   value: 3,
+    //   icon: TriangleAlert,
+    //   type: "warning",
+    // },
+    // {
+    //   title: "Reports",
+    //   value: 18,
+    //   icon: FileText,
+    //   type: "normal",
+    // },
   ];
 
   return (
@@ -135,7 +135,7 @@ function StatsCard() {
             </div>
 
             {/* Bottom Link */}
-            <div className="mt-6 flex justify-end">
+            {/* <div className="mt-6 flex justify-end">
               <button
                 className={`group/link flex items-center gap-1 text-xs font-semibold transition-colors ${
                   isWarning
@@ -149,9 +149,9 @@ function StatsCard() {
                   className="transition-transform duration-200 group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5"
                 />
               </button>
-            </div>
+            </div> */}
 
-            {/* Bottom Accent */}
+          
             <div
               className={`absolute bottom-0 left-0 h-[3px] w-0 transition-all duration-300 group-hover:w-full ${
                 isWarning ? "bg-red-400" : "bg-[#4F8F68]"

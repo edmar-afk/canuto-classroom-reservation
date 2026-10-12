@@ -9,7 +9,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 function ProfileModal({ open, onClose, user }) {
-  console.log("User in ProfileModal:", user);
+  //console.log("User in ProfileModal:", user);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
