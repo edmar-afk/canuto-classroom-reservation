@@ -23,6 +23,7 @@ function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [isSuperUser, setIsSuperUser] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -32,11 +33,22 @@ function Sidebar() {
     try {
       const parsed = JSON.parse(storedUser);
 
-      if (!parsed?.user?.id) return;
+      // Login saves data.user directly in localStorage.
+      // Also supports the older nested user.user structure.
+      const loggedInUser = parsed?.user ?? parsed;
+
+      const superuser =
+        loggedInUser?.is_superuser === true ||
+        loggedInUser?.is_superuser === "true";
+
+      setIsSuperUser(superuser);
+
+      if (!loggedInUser?.id) return;
 
       const fetchProfile = async () => {
         try {
-          const res = await api.get(`/api/profile/${parsed.user.id}/`);
+          const res = await api.get(`/api/profile/${loggedInUser.id}/`);
+
           setUser(res.data);
         } catch (error) {
           console.error("Failed to fetch profile:", error);
@@ -49,10 +61,6 @@ function Sidebar() {
     }
   }, []);
 
-  const isSuperUser =
-    user?.user?.is_superuser === true ||
-    user?.user?.is_superuser === "true";
-
   const currentPath = location.pathname;
 
   const isActive = (path) => currentPath === path;
@@ -63,6 +71,8 @@ function Sidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
     navigate("/");
   };
 
@@ -101,45 +111,44 @@ function Sidebar() {
       {/* NAVIGATION */}
       <nav className="relative z-20 flex-1 overflow-y-auto px-3 pb-32 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10">
         <div className="space-y-1">
-          {/* Dashboard */}
-          <Link
-            to="/dashboard"
-            onClick={closeMobileMenu}
-            className={menuItemClass(isActive("/dashboard"))}
-          >
-            <LayoutDashboard
-              size={21}
-              strokeWidth={1.8}
-              className="shrink-0"
-            />
-            <span>Dashboard</span>
-          </Link>
+          {/* DASHBOARD — SUPERUSERS ONLY */}
+          {isSuperUser && (
+            <Link
+              to="/dashboard"
+              onClick={closeMobileMenu}
+              className={menuItemClass(isActive("/dashboard"))}
+            >
+              <LayoutDashboard
+                size={21}
+                strokeWidth={1.8}
+                className="shrink-0"
+              />
+              <span>Dashboard</span>
+            </Link>
+          )}
 
-          {/* Schedules */}
+          {/* SCHEDULES */}
           <Link
             to="/calendar"
             onClick={closeMobileMenu}
             className={menuItemClass(isActive("/calendar"))}
           >
-            <CalendarCheck
-              size={21}
-              strokeWidth={1.8}
-              className="shrink-0"
-            />
+            <CalendarCheck size={21} strokeWidth={1.8} className="shrink-0" />
             <span>Schedules</span>
           </Link>
 
-          {/* Users */}
-          <Link
-            to="/users"
-            onClick={closeMobileMenu}
-            className={menuItemClass(isActive("/users"))}
-          >
-            <UserRound size={21} strokeWidth={1.8} className="shrink-0" />
-            <span>Users</span>
-          </Link>
-
-          {/* Settings */}
+          {/* USERS */}
+          {isSuperUser && (
+            <Link
+              to="/users"
+              onClick={closeMobileMenu}
+              className={menuItemClass(isActive("/users"))}
+            >
+              <UserRound size={21} strokeWidth={1.8} className="shrink-0" />
+              <span>Users</span>
+            </Link>
+          )}
+          {/* SETTINGS */}
           <Link
             to="/settings"
             onClick={closeMobileMenu}
@@ -165,7 +174,7 @@ function Sidebar() {
       {/* USER FOOTER */}
       <div className="relative z-30 border-t border-white/10 bg-[#1D5B43]/95 px-5 py-4 backdrop-blur-sm">
         <div className="flex items-center gap-3">
-          {/* Profile Picture */}
+          {/* PROFILE PICTURE */}
           <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-white bg-white">
             <img
               src={
@@ -178,14 +187,17 @@ function Sidebar() {
             />
           </div>
 
-          {/* User Information */}
+          {/* USER INFORMATION */}
           <button
             type="button"
             onClick={() => setProfileOpen(true)}
             className="min-w-0 flex-1 text-left"
           >
             <p className="truncate text-sm font-bold text-white">
-              {user?.student?.full_name || "Instructor"}
+              {user?.student?.full_name ||
+                user?.user?.username ||
+                user?.username ||
+                "Instructor"}
             </p>
 
             <p className="mt-0.5 line-clamp-2 text-[10px] leading-tight text-white/65">
@@ -195,7 +207,7 @@ function Sidebar() {
             </p>
           </button>
 
-          {/* Logout */}
+          {/* LOGOUT */}
           <button
             type="button"
             onClick={handleLogout}
@@ -224,11 +236,7 @@ function Sidebar() {
 
         <div className="ml-3 flex items-center gap-2">
           <div className="h-9 w-9 overflow-hidden rounded-full border border-white bg-white">
-            <img
-              src={logo}
-              alt="Logo"
-              className="h-full w-full object-cover"
-            />
+            <img src={logo} alt="Logo" className="h-full w-full object-cover" />
           </div>
 
           <div>

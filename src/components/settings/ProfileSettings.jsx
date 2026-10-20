@@ -100,22 +100,39 @@ function ProfileSettings({ data, onProfileUpdate }) {
   /* ---------------------------------------------
      Get logged-in user ID
   --------------------------------------------- */
+
   useEffect(() => {
     const stored = localStorage.getItem("user");
 
-    if (!stored) return;
+    let parsed = {};
 
     try {
-      const parsed = JSON.parse(stored);
-      const id = parsed?.user?.id;
-
-      if (id) {
-        setUserId(id);
-      }
+      parsed = stored ? JSON.parse(stored) : {};
     } catch (error) {
-      console.error("Invalid user data:", error);
+      console.error("Invalid user data in localStorage:", error);
     }
-  }, []);
+
+    const id =
+      data?.user?.id ??
+      data?.student?.user_id ??
+      (typeof data?.student?.user === "number"
+        ? data.student.user
+        : data?.student?.user?.id) ??
+      data?.user_id ??
+      parsed?.user?.id ??
+      parsed?.user_id ??
+      parsed?.id;
+
+    if (id != null && id !== "") {
+      setUserId(id);
+    } else {
+      setUserId(null);
+      console.warn("Could not identify user ID:", {
+        profileData: data,
+        storedUser: parsed,
+      });
+    }
+  }, [data]);
 
   /* ---------------------------------------------
      Load profile information

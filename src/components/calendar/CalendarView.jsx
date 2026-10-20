@@ -18,6 +18,7 @@ import api from "../../assets/api";
 import AddScheduleModal from "./AddScheduleModal";
 import EditScheduleModal from "./EditScheduleModal";
 import EditNormalScheduleModal from "./EditNormalScheduleModal";
+
 /* ---------------------------------------------
    Helpers
 --------------------------------------------- */
@@ -33,7 +34,6 @@ const formatDateKey = (date) => {
 const getMonthDays = (year, month) => {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
-
   const days = [];
 
   // Monday = 0, Sunday = 6
@@ -41,7 +41,6 @@ const getMonthDays = (year, month) => {
 
   for (let i = firstDayIndex; i > 0; i--) {
     const date = new Date(year, month, 1 - i);
-
     days.push({
       date,
       currentMonth: false,
@@ -90,7 +89,6 @@ function CalendarView() {
   );
 
   const [selectedDate, setSelectedDate] = useState(today);
-
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -99,7 +97,6 @@ function CalendarView() {
   const month = currentDate.getMonth();
 
   const days = useMemo(() => getMonthDays(year, month), [year, month]);
-
   const selectedDateKey = formatDateKey(selectedDate);
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -109,8 +106,50 @@ function CalendarView() {
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   const [normalEditingSchedule, setNormalEditingSchedule] = useState(null);
-
   const [normalEditModalOpen, setNormalEditModalOpen] = useState(false);
+
+  // Staff and superusers can add schedules.
+  const [canManageSchedules, setCanManageSchedules] = useState(false);
+
+  // Only superusers can edit, delete, or fix room conflicts.
+  const [isSuperUser, setIsSuperUser] = useState(false);
+
+  /* ---------------------------------------------
+     Read logged-in user permissions
+  --------------------------------------------- */
+
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+
+      if (!storedUser) {
+        setCanManageSchedules(false);
+        setIsSuperUser(false);
+        return;
+      }
+
+      const parsed = JSON.parse(storedUser);
+
+      // Supports either a directly stored user or an object containing user.
+      const loggedInUser = parsed?.user ?? parsed;
+
+      const superuser =
+        loggedInUser?.is_superuser === true ||
+        loggedInUser?.is_superuser === "true";
+
+      const staff =
+        loggedInUser?.is_staff === true ||
+        loggedInUser?.is_staff === "true";
+
+      setIsSuperUser(superuser);
+      setCanManageSchedules(superuser || staff);
+    } catch (error) {
+      console.error("Failed to read user permissions:", error);
+      setCanManageSchedules(false);
+      setIsSuperUser(false);
+    }
+  }, []);
+
   /* ---------------------------------------------
      Fetch schedules
   --------------------------------------------- */
@@ -129,7 +168,6 @@ function CalendarView() {
       setSchedules(data);
     } catch (err) {
       console.error("Failed to fetch schedules:", err);
-
       setError("Unable to load schedules.");
       setSchedules([]);
     } finally {
@@ -148,22 +186,15 @@ function CalendarView() {
   const events = useMemo(() => {
     return schedules.map((schedule) => ({
       id: schedule.id,
-
       title: schedule.course || "Scheduled Class",
-
       date: schedule.date,
-
       start: schedule.start_time?.slice(0, 5) || "",
       end: schedule.end_time?.slice(0, 5) || "",
-
       room: schedule.room_name || "N/A",
-
       instructor: schedule.instructor_name || "Unknown Instructor",
-
       course: schedule.course || "N/A",
       year_lvl: schedule.year_lvl || "N/A",
       section: schedule.section || "N/A",
-
       type: "academic",
     }));
   }, [schedules]);
@@ -172,19 +203,22 @@ function CalendarView() {
     if (!time) return 0;
 
     const [hours, minutes] = time.split(":").map(Number);
-
     return hours * 60 + minutes;
   };
 
+  /* ---------------------------------------------
+     Detect room conflicts
+  --------------------------------------------- */
+
   const hasRoomConflict = (event) => {
     return events.some((other) => {
-      // Don't compare the event with itself
+      // Do not compare the event with itself.
       if (other.id === event.id) return false;
 
-      // Must be on the same date
+      // Schedules must be on the same date.
       if (other.date !== event.date) return false;
 
-      // Must be in the same room
+      // Both schedules must have a valid room.
       if (
         !event.room ||
         !other.room ||
@@ -194,15 +228,15 @@ function CalendarView() {
         return false;
       }
 
+      // Schedules must use the same room.
       if (event.room !== other.room) return false;
 
       const eventStart = timeToMinutes(event.start);
       const eventEnd = timeToMinutes(event.end);
-
       const otherStart = timeToMinutes(other.start);
       const otherEnd = timeToMinutes(other.end);
 
-      // Time ranges overlap
+      // Time ranges overlap.
       return eventStart < otherEnd && eventEnd > otherStart;
     });
   };
@@ -216,7 +250,7 @@ function CalendarView() {
     .sort((a, b) => a.start.localeCompare(b.start));
 
   /* ---------------------------------------------
-     Navigation
+     Calendar navigation
   --------------------------------------------- */
 
   const goToPreviousMonth = () => {
@@ -235,7 +269,7 @@ function CalendarView() {
   };
 
   /* ---------------------------------------------
-     Helpers
+     Calendar helpers
   --------------------------------------------- */
 
   const monthTitle = currentDate.toLocaleDateString("en-US", {
@@ -262,14 +296,20 @@ function CalendarView() {
   const monthEventCount = events.filter((event) => {
     const eventDate = new Date(`${event.date}T00:00:00`);
 
-    return eventDate.getMonth() === month && eventDate.getFullYear() === year;
+    return (
+      eventDate.getMonth() === month &&
+      eventDate.getFullYear() === year
+    );
   }).length;
 
   /* ---------------------------------------------
-     Modal
+     Add schedule
   --------------------------------------------- */
 
   const openAddSchedule = () => {
+    // Only staff and superusers may add schedules.
+    if (!canManageSchedules) return;
+
     setScheduleDate(formatDateKey(selectedDate));
     setShowAddModal(true);
   };
@@ -278,15 +318,18 @@ function CalendarView() {
     setShowAddModal(false);
   };
 
-  /*
-    Called after AddScheduleModal successfully creates
-    a schedule.
-  */
   const handleScheduleCreated = () => {
     fetchSchedules();
   };
 
+  /* ---------------------------------------------
+     Edit schedule / fix room conflict
+  --------------------------------------------- */
+
   const openEditSchedule = (event) => {
+    // Superuser-only action.
+    if (!isSuperUser) return;
+
     const originalSchedule = schedules.find(
       (schedule) => schedule.id === event.id,
     );
@@ -302,7 +345,14 @@ function CalendarView() {
     setEditingSchedule(null);
   };
 
+  /* ---------------------------------------------
+     Delete schedule
+  --------------------------------------------- */
+
   const handleDeleteSchedule = async (event) => {
+    // Superuser-only action.
+    if (!isSuperUser) return;
+
     const confirmed = window.confirm(
       `Are you sure you want to delete "${event.course}"?`,
     );
@@ -317,12 +367,18 @@ function CalendarView() {
       );
     } catch (error) {
       console.error("Failed to delete schedule:", error);
-
       alert("Failed to delete schedule. Please try again.");
     }
   };
 
+  /* ---------------------------------------------
+     Edit normal schedule
+  --------------------------------------------- */
+
   const openNormalEditSchedule = (event) => {
+    // Superuser-only action.
+    if (!isSuperUser) return;
+
     const originalSchedule = schedules.find(
       (schedule) => schedule.id === event.id,
     );
@@ -338,12 +394,13 @@ function CalendarView() {
     setNormalEditingSchedule(null);
   };
 
+  /* ---------------------------------------------
+     Render calendar
+  --------------------------------------------- */
+
   return (
     <div className="space-y-5">
-      {/* =========================================
-          CALENDAR HEADER
-      ========================================= */}
-
+      {/* Calendar header */}
       <div className="rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm sm:px-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           {/* Title */}
@@ -363,20 +420,22 @@ function CalendarView() {
             </div>
           </div>
 
-          {/* Navigation + Add */}
+          {/* Navigation and Add Schedule */}
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={openAddSchedule}
-              className="flex items-center gap-2 rounded-xl bg-[#173B2F] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#102d23]"
-            >
-              <Plus size={16} />
-              Add Schedule for{" "}
-              {selectedDate.toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-              })}
-            </button>
+            {canManageSchedules && (
+              <button
+                type="button"
+                onClick={openAddSchedule}
+                className="flex items-center gap-2 rounded-xl bg-[#173B2F] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#102d23]"
+              >
+                <Plus size={16} />
+                Add Schedule for{" "}
+                {selectedDate.toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                })}
+              </button>
+            )}
 
             <button
               type="button"
@@ -414,15 +473,9 @@ function CalendarView() {
         </div>
       )}
 
-      {/* =========================================
-          CALENDAR + DAY DETAILS
-      ========================================= */}
-
+      {/* Calendar and day details */}
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
-        {/* =======================================
-            MAIN CALENDAR
-        ======================================= */}
-
+        {/* Main calendar */}
         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           {/* Month */}
           <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-6">
@@ -434,7 +487,9 @@ function CalendarView() {
               <p className="mt-0.5 text-xs text-slate-400">
                 {loading
                   ? "Loading schedules..."
-                  : `${monthEventCount} scheduled ${monthEventCount === 1 ? "class" : "classes"}`}
+                  : `${monthEventCount} scheduled ${
+                      monthEventCount === 1 ? "class" : "classes"
+                    }`}
               </p>
             </div>
 
@@ -442,6 +497,7 @@ function CalendarView() {
               <div className="hidden items-center gap-4 text-xs sm:flex">
                 <Legend color="bg-blue-500" label="Scheduled Classes" />
               </div>
+
               <div className="hidden items-center gap-4 text-xs sm:flex">
                 <Legend color="bg-red-500" label="Conflict Classes" />
               </div>
@@ -464,17 +520,15 @@ function CalendarView() {
                 className="border-r border-slate-100 px-2 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-slate-400 last:border-r-0 sm:text-xs"
               >
                 <span className="hidden sm:inline">{day}</span>
-
                 <span className="sm:hidden">{day.substring(0, 2)}</span>
               </div>
             ))}
           </div>
 
-          {/* Days */}
+          {/* Calendar days */}
           <div className="grid grid-cols-7">
             {days.map(({ date, currentMonth }, index) => {
               const dayEvents = getEventsForDate(date);
-
               const todayCell = isToday(date);
               const selectedCell = isSelected(date);
 
@@ -520,19 +574,20 @@ function CalendarView() {
                   <div className="mt-1.5 space-y-1">
                     {dayEvents.slice(0, 3).map((event) => {
                       const styles = eventTypeStyles.academic;
+                      const conflict = hasRoomConflict(event);
 
                       return (
                         <div
                           key={event.id}
                           className={`flex items-center gap-1.5 truncate rounded-md border px-1.5 py-1 text-[9px] font-semibold transition ${
-                            hasRoomConflict(event)
+                            conflict
                               ? "animate-pulse border-red-400 bg-red-50 text-red-700 shadow-[0_0_10px_rgba(239,68,68,0.45)]"
                               : styles.badge
                           }`}
                         >
                           <span
                             className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-                              hasRoomConflict(event) ? "bg-red-500" : styles.dot
+                              conflict ? "bg-red-500" : styles.dot
                             }`}
                           />
                           <span className="truncate">{event.course}</span> -{" "}
@@ -553,12 +608,9 @@ function CalendarView() {
           </div>
         </section>
 
-        {/* =======================================
-            SELECTED DAY
-        ======================================= */}
-
+        {/* Selected day */}
         <aside className="h-fit overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          {/* Selected Day Header */}
+          {/* Selected day header */}
           <div
             className={`px-5 py-5 transition ${
               selectedEvents.some((event) => hasRoomConflict(event))
@@ -595,11 +647,10 @@ function CalendarView() {
               })}
             </p>
 
-            {/* Conflict Warning */}
+            {/* Conflict warning */}
             {selectedEvents.some((event) => hasRoomConflict(event)) && (
               <div className="mt-3 flex items-center gap-2 rounded-lg bg-white/15 px-3 py-2">
                 <div className="h-2 w-2 animate-pulse rounded-full bg-white" />
-
                 <span className="text-[10px] font-bold uppercase tracking-wide text-white">
                   Room Schedule Conflict
                 </span>
@@ -607,12 +658,11 @@ function CalendarView() {
             )}
           </div>
 
-          {/* Schedule Content */}
+          {/* Schedule content */}
           <div className="p-5">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-10">
                 <Loader2 size={24} className="animate-spin text-[#173B2F]" />
-
                 <p className="mt-3 text-xs text-slate-400">
                   Loading schedules...
                 </p>
@@ -647,7 +697,7 @@ function CalendarView() {
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        {/* Event Dot */}
+                        {/* Event dot */}
                         <div
                           className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
                             conflict ? "bg-red-500" : styles.dot
@@ -655,7 +705,7 @@ function CalendarView() {
                         />
 
                         <div className="min-w-0 flex-1">
-                          {/* Course Name + Actions */}
+                          {/* Course name and superuser actions */}
                           <div className="flex items-center justify-between gap-2">
                             <h4
                               className={`min-w-0 truncate text-sm font-bold ${
@@ -665,54 +715,54 @@ function CalendarView() {
                               {event.course}
                             </h4>
 
-                            {/* Action Buttons */}
-                            <div className="flex shrink-0 items-center gap-1">
-                              {/* Edit */}
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
+                            {/* Only superusers see Edit and Delete */}
+                            {isSuperUser && (
+                              <div className="flex shrink-0 items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
 
-                                  if (conflict) {
-                                    openEditSchedule(event);
-                                  } else {
-                                    openNormalEditSchedule(event);
+                                    if (conflict) {
+                                      openEditSchedule(event);
+                                    } else {
+                                      openNormalEditSchedule(event);
+                                    }
+                                  }}
+                                  title={
+                                    conflict
+                                      ? "Fix room conflict"
+                                      : "Edit schedule"
                                   }
-                                }}
-                                title={
-                                  conflict
-                                    ? "Fix room conflict"
-                                    : "Edit schedule"
-                                }
-                                className={`flex h-7 w-7 items-center justify-center rounded-lg transition ${
-                                  conflict
-                                    ? "text-red-500 hover:bg-red-200 hover:text-red-700"
-                                    : "text-slate-400 hover:bg-slate-200 hover:text-[#173B2F]"
-                                }`}
-                              >
-                                <Pencil size={14} />
-                              </button>
+                                  className={`flex h-7 w-7 items-center justify-center rounded-lg transition ${
+                                    conflict
+                                      ? "text-red-500 hover:bg-red-200 hover:text-red-700"
+                                      : "text-slate-400 hover:bg-slate-200 hover:text-[#173B2F]"
+                                  }`}
+                                >
+                                  <Pencil size={14} />
+                                </button>
 
-                              {/* Delete */}
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteSchedule(event);
-                                }}
-                                title="Delete schedule"
-                                className={`flex h-7 w-7 items-center justify-center rounded-lg transition ${
-                                  conflict
-                                    ? "text-red-500 hover:bg-red-200 hover:text-red-700"
-                                    : "text-slate-400 hover:bg-red-100 hover:text-red-600"
-                                }`}
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteSchedule(event);
+                                  }}
+                                  title="Delete schedule"
+                                  className={`flex h-7 w-7 items-center justify-center rounded-lg transition ${
+                                    conflict
+                                      ? "text-red-500 hover:bg-red-200 hover:text-red-700"
+                                      : "text-slate-400 hover:bg-red-100 hover:text-red-600"
+                                  }`}
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            )}
                           </div>
 
-                          {/* Conflict Badge */}
+                          {/* Conflict badge is visible to everyone */}
                           {conflict && (
                             <div className="mt-1.5 inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-red-600">
                               Room Conflict
@@ -770,26 +820,23 @@ function CalendarView() {
                           {/* Instructor */}
                           <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
                             <UserRound size={14} />
-
                             <span className="truncate">{event.instructor}</span>
                           </div>
 
-                          {/* Year Level */}
+                          {/* Year level */}
                           <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
                             <GraduationCap size={14} />
-
                             <span>{event.year_lvl}</span>
                           </div>
 
                           {/* Section */}
                           <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
                             <UsersRound size={14} />
-
                             <span>Section {event.section}</span>
                           </div>
 
-                          {/* Fix Conflict Button */}
-                          {conflict && (
+                          {/* Only superusers can fix room conflicts */}
+                          {isSuperUser && conflict && (
                             <button
                               type="button"
                               onClick={() => openEditSchedule(event)}
@@ -807,43 +854,42 @@ function CalendarView() {
               </div>
             )}
 
-            {/* Add Schedule */}
-            <button
-              type="button"
-              onClick={openAddSchedule}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500 transition hover:border-[#173B2F]/30 hover:bg-[#173B2F]/5 hover:text-[#173B2F]"
-            >
-              <Plus size={16} />
-              Add Schedule
-            </button>
+            {/* Staff and superusers can add schedules */}
+            {canManageSchedules && (
+              <button
+                type="button"
+                onClick={openAddSchedule}
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500 transition hover:border-[#173B2F]/30 hover:bg-[#173B2F]/5 hover:text-[#173B2F]"
+              >
+                <Plus size={16} />
+                Add Schedule
+              </button>
+            )}
           </div>
         </aside>
       </div>
 
-      {/* =========================================
-          MOBILE LEGEND
-      ========================================= */}
-
+      {/* Mobile legend */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-slate-200 bg-white px-5 py-4 sm:hidden">
         <Legend color="bg-blue-500" label="Scheduled Class" />
       </div>
 
-      {/* =========================================
-          ADD SCHEDULE MODAL
-      ========================================= */}
-
+      {/* Add schedule modal */}
       <AddScheduleModal
-        isOpen={showAddModal}
+        isOpen={canManageSchedules && showAddModal}
         onClose={closeAddSchedule}
         onScheduleCreated={handleScheduleCreated}
         selectedDate={scheduleDate}
       />
 
+      {/* Edit modal: superuser only */}
       <EditScheduleModal
-        isOpen={editModalOpen}
+        isOpen={isSuperUser && editModalOpen}
         onClose={closeEditSchedule}
         schedule={editingSchedule}
         onUpdated={(updatedSchedule) => {
+          if (!isSuperUser) return;
+
           setSchedules((prev) =>
             prev.map((schedule) =>
               schedule.id === updatedSchedule.id ? updatedSchedule : schedule,
@@ -852,11 +898,14 @@ function CalendarView() {
         }}
       />
 
+      {/* Normal edit modal: superuser only */}
       <EditNormalScheduleModal
-        isOpen={normalEditModalOpen}
+        isOpen={isSuperUser && normalEditModalOpen}
         onClose={closeNormalEditSchedule}
         schedule={normalEditingSchedule}
         onUpdated={(updatedSchedule) => {
+          if (!isSuperUser) return;
+
           setSchedules((prev) =>
             prev.map((schedule) =>
               schedule.id === updatedSchedule.id ? updatedSchedule : schedule,
@@ -876,8 +925,9 @@ function Legend({ color, label }) {
   return (
     <div className="flex items-center gap-1.5">
       <span className={`h-2 w-2 rounded-full ${color}`} />
-
-      <span className="text-[10px] font-semibold text-slate-500">{label}</span>
+      <span className="text-[10px] font-semibold text-slate-500">
+        {label}
+      </span>
     </div>
   );
 }

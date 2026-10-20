@@ -9,26 +9,40 @@ function Settings() {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-
-    if (!stored) return;
-
-    const parsed = JSON.parse(stored);
-    const userId = parsed?.user?.id;
-
-    if (!userId) return;
-
     const fetchProfile = async () => {
       try {
+        const stored = localStorage.getItem("user");
+
+        console.log("Stored user:", stored);
+
+        if (!stored) {
+          console.error("No user found in localStorage.");
+          return;
+        }
+
+        const parsed = JSON.parse(stored);
+        console.log("Parsed user:", parsed);
+
+        // Support either { user: { id } } or { id }
+        const userId = parsed?.user?.id ?? parsed?.id;
+
+        if (!userId) {
+          console.error("User ID not found in localStorage:", parsed);
+          return;
+        }
+
+        console.log("Fetching profile for user ID:", userId);
+
         const res = await api.get(`/api/profile/${userId}/`);
 
         console.log("FULL PROFILE RESPONSE:", res.data);
-        console.log("STUDENT:", res.data?.student);
-        console.log("USER:", res.data?.user);
 
         setData(res.data);
       } catch (error) {
-        console.log(error);
+        console.error(
+          "Failed to fetch profile:",
+          error.response?.data || error.message,
+        );
       }
     };
 

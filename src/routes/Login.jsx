@@ -40,8 +40,16 @@ function Login() {
 
       const data = res.data;
 
-      // Login successful — no staff/superuser checking
-      localStorage.setItem("user", JSON.stringify(data));
+      console.log("Login API response:", data);
+      console.log("User data:", data.user);
+      console.log("Is superuser:", data.user?.is_superuser);
+
+      // Save user data
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Save JWT tokens if your API interceptor uses them
+      localStorage.setItem("access", data.access);
+      localStorage.setItem("refresh", data.refresh);
 
       await Swal.fire({
         icon: "success",
@@ -50,14 +58,22 @@ function Login() {
         confirmButtonColor: "#2563eb",
       });
 
-      navigate("/dashboard");
+      // Redirect based on the authenticated user's role
+      if (data.user?.is_superuser === true) {
+        navigate("/dashboard");
+      } else {
+        navigate("/calendar");
+      }
     } catch (err) {
       console.error(err);
 
       Swal.fire({
         icon: "error",
         title: "Login Failed",
-        text: "Incorrect username or password",
+        text:
+          err.response?.data?.detail ||
+          err.response?.data?.error ||
+          "Incorrect username or password",
         confirmButtonColor: "#dc2626",
       });
     } finally {
