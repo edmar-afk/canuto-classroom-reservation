@@ -271,6 +271,7 @@ function Register() {
                     className="w-full appearance-none rounded-md border border-slate-300 bg-slate-50 py-3 pl-12 pr-4 text-slate-700 transition-all duration-200 outline-none focus:border-green-600 focus:bg-white focus:ring-4 focus:ring-green-100"
                   >
                     <option value="">Course</option>
+                    <option value="BSIT">BSIT</option>
                     <option value="BTVTED">BTVTED</option>
                     <option value="BSIS">BSIS</option>
                     <option value="ACT">ACT</option>
