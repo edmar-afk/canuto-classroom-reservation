@@ -273,8 +273,8 @@ function Register() {
                     <option value="">Course</option>
                     <option value="BSIT">BSIT</option>
                     <option value="BTVTED">BTVTED</option>
-                    <option value="BSIS">BSIS</option>
-                    <option value="ACT">ACT</option>
+                    <option value="BIT">BIT</option>
+                    <option value="BTLED">BTLED</option>
                   </select>
                 </div>
 
