@@ -6,7 +6,12 @@ import {
   User,
   X,
   ChevronDown,
+  Pencil,
+  Save,
+  Loader2,
 } from "lucide-react";
+
+import api from "../../assets/api";
 import AddTeacherModal from "./AddTeacherModal";
 
 function UsersTable({ users = [], onDelete, onRefresh }) {
@@ -19,6 +24,15 @@ function UsersTable({ users = [], onDelete, onRefresh }) {
   const [showFilters, setShowFilters] = useState(false);
   const [deleteUser, setDeleteUser] = useState(null);
   const [deleting, setDeleting] = useState(false);
+
+  // INLINE EDITING
+  const [editingId, setEditingId] = useState(null);
+  const [editData, setEditData] = useState({});
+  const [saving, setSaving] = useState(false);
+
+  // ============================================================
+  // DELETE USER
+  // ============================================================
 
   const handleDeleteConfirm = async () => {
     if (!deleteUser || deleting) return;
@@ -35,9 +49,94 @@ function UsersTable({ users = [], onDelete, onRefresh }) {
       setDeleting(false);
     }
   };
-  /* ---------------------------------------------
-     Get unique filter values
-  --------------------------------------------- */
+
+  // ============================================================
+  // START EDITING
+  // ============================================================
+
+  const handleEdit = (user) => {
+    setEditingId(user.id);
+
+    setEditData({
+      full_name: user.full_name || user.name || "",
+      username: user.user?.username || "",
+      course: user.course || "",
+      section: user.section || "",
+      year_lvl: user.year_lvl || "",
+      is_staff: Boolean(user.user?.is_staff),
+    });
+  };
+
+  // ============================================================
+  // CANCEL EDITING
+  // ============================================================
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditData({});
+  };
+
+  // ============================================================
+  // HANDLE INPUT CHANGES
+  // ============================================================
+
+  const handleInputChange = (field, value) => {
+    setEditData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  // ============================================================
+  // SAVE STUDENT AND USER INFORMATION
+  // ============================================================
+
+  const handleSave = async (user) => {
+    if (saving || editingId !== user.id) return;
+
+    try {
+      setSaving(true);
+
+      const payload = {
+        full_name: editData.full_name,
+        course: editData.course,
+        section: editData.section,
+        year_lvl: editData.year_lvl,
+
+        user: {
+          username: editData.username,
+          is_staff: editData.is_staff,
+        },
+      };
+
+      const response = await api.patch(
+        `/api/students/edit/${user.id}/`,
+        payload,
+      );
+
+      console.log("User updated:", response.data);
+
+      setEditingId(null);
+      setEditData({});
+
+      await onRefresh?.();
+    } catch (error) {
+      console.error("Update user failed:", error);
+
+      const errorMessage =
+        error.response?.data?.user?.username?.[0] ||
+        error.response?.data?.detail ||
+        "Failed to update user. Please check your information.";
+
+      alert(errorMessage);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // ============================================================
+  // UNIQUE FILTER VALUES
+  // ============================================================
 
   const courses = useMemo(() => {
     return [
@@ -57,15 +156,11 @@ function UsersTable({ users = [], onDelete, onRefresh }) {
     ].sort();
   }, [users]);
 
-  /* ---------------------------------------------
-     Get roles from is_staff
-  --------------------------------------------- */
-
   const roles = ["Teacher", "Student"];
 
-  /* ---------------------------------------------
-     Filter users
-  --------------------------------------------- */
+  // ============================================================
+  // FILTER USERS
+  // ============================================================
 
   const filteredUsers = useMemo(() => {
     const keyword = search.trim().toLowerCase();
@@ -115,9 +210,9 @@ function UsersTable({ users = [], onDelete, onRefresh }) {
     });
   }, [users, search, courseFilter, sectionFilter, yearFilter, roleFilter]);
 
-  /* ---------------------------------------------
-     Helpers
-  --------------------------------------------- */
+  // ============================================================
+  // HELPERS
+  // ============================================================
 
   const getFullName = (user) => {
     if (user.full_name) return user.full_name;
@@ -163,6 +258,13 @@ function UsersTable({ users = [], onDelete, onRefresh }) {
     sectionFilter !== "All" ||
     yearFilter !== "All" ||
     roleFilter !== "All";
+
+  // ============================================================
+  // INPUT STYLE
+  // ============================================================
+
+  const inputClass =
+    "h-9 w-full min-w-0 rounded-lg border border-[#173B2F]/20 bg-white px-2.5 text-sm font-medium text-slate-700 outline-none transition focus:border-[#173B2F] focus:ring-2 focus:ring-[#173B2F]/10";
 
   return (
     <>
@@ -315,15 +417,19 @@ function UsersTable({ users = [], onDelete, onRefresh }) {
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => {
                   const profilePicture = getProfilePicture(user);
-
                   const role = getRole(user);
+                  const isEditing = editingId === user.id;
 
                   return (
                     <tr
                       key={user.id}
-                      className="group transition hover:bg-slate-50/70"
+                      className={`transition ${
+                        isEditing
+                          ? "bg-[#173B2F]/[0.035]"
+                          : "group hover:bg-slate-50/70"
+                      }`}
                     >
-                      {/* USER */}
+                      {/* USER / FULL NAME / USERNAME */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#173B2F] text-sm font-bold text-white">
@@ -338,15 +444,47 @@ function UsersTable({ users = [], onDelete, onRefresh }) {
                             )}
                           </div>
 
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-bold text-slate-800">
-                              {getFullName(user)}
-                            </p>
+                          <div className="min-w-0 flex-1">
+                            {isEditing ? (
+                              <div className="space-y-2">
+                                <input
+                                  type="text"
+                                  value={editData.full_name}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "full_name",
+                                      e.target.value,
+                                    )
+                                  }
+                                  placeholder="Full name"
+                                  className={inputClass}
+                                />
 
-                            {user.user?.username && (
-                              <p className="mt-0.5 truncate text-xs text-slate-400">
-                                @{user.user.username}
-                              </p>
+                                <input
+                                  type="text"
+                                  value={editData.username}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "username",
+                                      e.target.value,
+                                    )
+                                  }
+                                  placeholder="Username"
+                                  className={inputClass}
+                                />
+                              </div>
+                            ) : (
+                              <>
+                                <p className="truncate text-sm font-bold text-slate-800">
+                                  {getFullName(user)}
+                                </p>
+
+                                {user.user?.username && (
+                                  <p className="mt-0.5 truncate text-xs text-slate-400">
+                                    @{user.user.username}
+                                  </p>
+                                )}
+                              </>
                             )}
                           </div>
                         </div>
@@ -354,48 +492,166 @@ function UsersTable({ users = [], onDelete, onRefresh }) {
 
                       {/* COURSE */}
                       <td className="px-4 py-4">
-                        <span className="text-sm font-medium text-slate-600">
-                          {user.course || "—"}
-                        </span>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={editData.course}
+                            disabled={editData.is_staff}
+                            onChange={(e) =>
+                              handleInputChange("course", e.target.value)
+                            }
+                            placeholder="Course"
+                            className={`${inputClass} ${
+                              editData.is_staff
+                                ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                                : ""
+                            }`}
+                          />
+                        ) : (
+                          <span className="text-sm font-medium text-slate-600">
+                            {user.course || "—"}
+                          </span>
+                        )}
                       </td>
 
                       {/* SECTION */}
                       <td className="px-4 py-4">
-                        <span className="text-sm font-medium text-slate-600">
-                          {user.section || "—"}
-                        </span>
+                        <td className="px-4 py-4">
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={editData.section}
+                              disabled={editData.is_staff}
+                              onChange={(e) =>
+                                handleInputChange("section", e.target.value)
+                              }
+                              placeholder="Section"
+                              className={`${inputClass} ${
+                                editData.is_staff
+                                  ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                                  : ""
+                              }`}
+                            />
+                          ) : (
+                            <span className="text-sm font-medium text-slate-600">
+                              {user.section || "—"}
+                            </span>
+                          )}
+                        </td>
                       </td>
 
-                      {/* YEAR */}
+                      {/* YEAR LEVEL */}
                       <td className="px-4 py-4">
-                        <span className="inline-flex rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
-                          {user.year_lvl ? `Year ${user.year_lvl}` : "—"}
-                        </span>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={editData.year_lvl}
+                            disabled={editData.is_staff}
+                            onChange={(e) =>
+                              handleInputChange("year_lvl", e.target.value)
+                            }
+                            placeholder="Year level"
+                            className={`${inputClass} ${
+                              editData.is_staff
+                                ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                                : ""
+                            }`}
+                          />
+                        ) : (
+                          <span className="inline-flex rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                            {user.year_lvl ? `Year ${user.year_lvl}` : "—"}
+                          </span>
+                        )}
                       </td>
 
-                      {/* ROLE / IS STAFF */}
+                      {/* ROLE */}
                       <td className="px-4 py-4">
-                        <span
-                          className={`inline-flex rounded-lg px-2.5 py-1 text-xs font-semibold ${
-                            user.user?.is_staff
-                              ? "bg-[#173B2F]/10 text-[#173B2F]"
-                              : "bg-slate-100 text-slate-500"
-                          }`}
-                        >
-                          {role}
-                        </span>
+                        {isEditing ? (
+                          <select
+                            value={editData.is_staff ? "Teacher" : "Student"}
+                            onChange={(e) =>
+                              handleInputChange(
+                                "is_staff",
+                                e.target.value === "Teacher",
+                              )
+                            }
+                            className={inputClass}
+                          >
+                            <option value="Student">Student</option>
+                            <option value="Teacher">Teacher</option>
+                          </select>
+                        ) : (
+                          <span
+                            className={`inline-flex rounded-lg px-2.5 py-1 text-xs font-semibold ${
+                              user.user?.is_staff
+                                ? "bg-[#173B2F]/10 text-[#173B2F]"
+                                : "bg-slate-100 text-slate-500"
+                            }`}
+                          >
+                            {role}
+                          </span>
+                        )}
                       </td>
 
-                      {/* ACTION */}
-                      <td className="px-6 py-4 text-right">
-                        <button
-                          type="button"
-                          onClick={() => setDeleteUser(user)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-500"
-                          title="Delete user"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                      {/* ACTIONS */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-1">
+                          {isEditing ? (
+                            <>
+                              {/* SAVE */}
+                              <button
+                                type="button"
+                                onClick={() => handleSave(user)}
+                                disabled={saving}
+                                className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#173B2F] px-3 text-xs font-semibold text-white transition hover:bg-[#245542] disabled:cursor-not-allowed disabled:opacity-60"
+                                title="Save changes"
+                              >
+                                {saving ? (
+                                  <Loader2 size={15} className="animate-spin" />
+                                ) : (
+                                  <Save size={15} />
+                                )}
+
+                                {saving ? "Saving..." : "Save"}
+                              </button>
+
+                              {/* CANCEL */}
+                              <button
+                                type="button"
+                                onClick={handleCancelEdit}
+                                disabled={saving}
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-200 hover:text-slate-700 disabled:opacity-50"
+                                title="Cancel editing"
+                              >
+                                <X size={17} />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              {/* EDIT */}
+                              <button
+                                type="button"
+                                onClick={() => handleEdit(user)}
+                                disabled={editingId !== null}
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-[#173B2F]/10 hover:text-[#173B2F] disabled:cursor-not-allowed disabled:opacity-30"
+                                title="Edit user"
+                              >
+                                <Pencil size={16} />
+                              </button>
+
+                              {/* DELETE */}
+                              <button
+                                type="button"
+                                onClick={() => setDeleteUser(user)}
+                                disabled={editingId !== null}
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-30"
+                                title="Delete user"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -478,7 +734,6 @@ function UsersTable({ users = [], onDelete, onRefresh }) {
                 className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <Trash2 size={15} />
-
                 {deleting ? "Deleting..." : "Delete User"}
               </button>
             </div>
@@ -489,9 +744,9 @@ function UsersTable({ users = [], onDelete, onRefresh }) {
   );
 }
 
-/* =========================================================
-   FILTER SELECT
-========================================================= */
+// ============================================================
+// FILTER SELECT
+// ============================================================
 
 function FilterSelect({ label, value, onChange, options }) {
   return (

@@ -118,11 +118,19 @@ function CalendarView() {
      Read logged-in user permissions
   --------------------------------------------- */
 
+  /* ---------------------------------------------
+   Read logged-in user permissions
+--------------------------------------------- */
+
   useEffect(() => {
     try {
-      const storedUser = localStorage.getItem("user");
+      // Support different localStorage keys
+      const storedUser =
+        localStorage.getItem("user") || localStorage.getItem("userInfo");
 
       if (!storedUser) {
+        console.error("No logged-in user found in localStorage.");
+
         setCanManageSchedules(false);
         setIsSuperUser(false);
         return;
@@ -130,21 +138,43 @@ function CalendarView() {
 
       const parsed = JSON.parse(storedUser);
 
-      // Supports either a directly stored user or an object containing user.
+      // Support nested user objects
       const loggedInUser = parsed?.user ?? parsed;
+
+      console.log("LOGGED-IN USER:", loggedInUser);
+
+      const role = String(
+        loggedInUser?.role ||
+          loggedInUser?.user_role ||
+          loggedInUser?.account_type ||
+          "",
+      )
+        .toLowerCase()
+        .trim();
 
       const superuser =
         loggedInUser?.is_superuser === true ||
-        loggedInUser?.is_superuser === "true";
+        loggedInUser?.is_superuser === "true" ||
+        loggedInUser?.is_superuser === 1;
 
       const staff =
         loggedInUser?.is_staff === true ||
-        loggedInUser?.is_staff === "true";
+        loggedInUser?.is_staff === "true" ||
+        loggedInUser?.is_staff === 1;
+
+      // Instructors, staff, and superusers can add schedules.
+      const canAdd = superuser || staff || role === "instructor";
 
       setIsSuperUser(superuser);
-      setCanManageSchedules(superuser || staff);
+      setCanManageSchedules(canAdd);
+
+      console.log("USER ROLE:", role);
+      console.log("IS SUPERUSER:", superuser);
+      console.log("IS STAFF:", staff);
+      console.log("CAN ADD SCHEDULE:", canAdd);
     } catch (error) {
       console.error("Failed to read user permissions:", error);
+
       setCanManageSchedules(false);
       setIsSuperUser(false);
     }
@@ -296,10 +326,7 @@ function CalendarView() {
   const monthEventCount = events.filter((event) => {
     const eventDate = new Date(`${event.date}T00:00:00`);
 
-    return (
-      eventDate.getMonth() === month &&
-      eventDate.getFullYear() === year
-    );
+    return eventDate.getMonth() === month && eventDate.getFullYear() === year;
   }).length;
 
   /* ---------------------------------------------
@@ -925,9 +952,7 @@ function Legend({ color, label }) {
   return (
     <div className="flex items-center gap-1.5">
       <span className={`h-2 w-2 rounded-full ${color}`} />
-      <span className="text-[10px] font-semibold text-slate-500">
-        {label}
-      </span>
+      <span className="text-[10px] font-semibold text-slate-500">{label}</span>
     </div>
   );
 }
