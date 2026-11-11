@@ -11,12 +11,7 @@ import {
 } from "lucide-react";
 import api from "../../assets/api";
 
-function EditNormalScheduleModal({
-  isOpen,
-  onClose,
-  schedule,
-  onUpdated,
-}) {
+function EditNormalScheduleModal({ isOpen, onClose, schedule, onUpdated }) {
   const [form, setForm] = useState({
     course: "",
     year_lvl: "",
@@ -39,14 +34,8 @@ function EditNormalScheduleModal({
       section: schedule.section || "",
       room_name: schedule.room_name || schedule.room || "",
       date: schedule.date || "",
-      start_time:
-        schedule.start_time?.slice(0, 5) ||
-        schedule.start ||
-        "",
-      end_time:
-        schedule.end_time?.slice(0, 5) ||
-        schedule.end ||
-        "",
+      start_time: schedule.start_time?.slice(0, 5) || schedule.start || "",
+      end_time: schedule.end_time?.slice(0, 5) || schedule.end || "",
     });
 
     setError("");
@@ -93,9 +82,7 @@ function EditNormalScheduleModal({
       console.error("Failed to update schedule:", err);
 
       const message = err.response?.data
-        ? Object.values(err.response.data)
-            .flat()
-            .join(" ")
+        ? Object.values(err.response.data).flat().join(" ")
         : "Failed to update schedule.";
 
       setError(message);
@@ -231,11 +218,29 @@ function EditNormalScheduleModal({
                 className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-sm text-slate-700 outline-none transition focus:border-[#173B2F] focus:bg-white focus:ring-2 focus:ring-[#173B2F]/10"
               >
                 <option value="">Select a room</option>
-                <option value="Room 301">Room 301</option>
-                <option value="Room 302">Room 302</option>
-                <option value="Room 303">Room 303</option>
-                <option value="Room 304">Room 304</option>
-                <option value="Room 305">Room 305</option>
+                <option value="FSM 1">FSM 1</option>
+                <option value="FSM 2">FSM 2</option>
+                <option value="FSM 3">FSM 3</option>
+                <option value="FSM 4">FSM 4</option>
+                <option value="FSM LAB">FSM LAB</option>
+
+                <option value="HE 1">HE 1</option>
+                <option value="HE 2">HE 2</option>
+                <option value="HE 3">HE 3</option>
+                <option value="HE 4">HE 4</option>
+                <option value="HE LAB">HE LAB</option>
+
+                <option value="CH 1">CH 1</option>
+                <option value="CH 2">CH 2</option>
+                <option value="CH 3">CH 3</option>
+                <option value="CAD">CAD</option>
+
+                <option value="CH 4">CH 4</option>
+                <option value="CH 5">CH 5</option>
+                <option value="CH 6">CH 6</option>
+                <option value="CH 7">CH 7</option>
+                <option value="LAB 1">LAB 1</option>
+                <option value="LAB 2">LAB 2</option>
               </select>
             </div>
           </div>
@@ -337,10 +342,7 @@ function EditNormalScheduleModal({
             >
               {saving ? (
                 <>
-                  <Loader2
-                    size={16}
-                    className="animate-spin"
-                  />
+                  <Loader2 size={16} className="animate-spin" />
                   Saving...
                 </>
               ) : (

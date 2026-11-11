@@ -232,11 +232,29 @@ function EditScheduleModal({ isOpen, onClose, schedule, onUpdated }) {
                 className="w-full appearance-none rounded-xl border border-red-200 bg-red-50 py-2.5 pl-10 pr-3 text-sm font-semibold text-red-700 outline-none transition focus:border-red-400 focus:bg-white focus:ring-2 focus:ring-red-100"
               >
                 <option value="">Select a room</option>
-                <option value="Room 301">Room 301</option>
-                <option value="Room 302">Room 302</option>
-                <option value="Room 303">Room 303</option>
-                <option value="Room 304">Room 304</option>
-                <option value="Room 305">Room 305</option>
+                <option value="FSM 1">FSM 1</option>
+                <option value="FSM 2">FSM 2</option>
+                <option value="FSM 3">FSM 3</option>
+                <option value="FSM 4">FSM 4</option>
+                <option value="FSM LAB">FSM LAB</option>
+
+                <option value="HE 1">HE 1</option>
+                <option value="HE 2">HE 2</option>
+                <option value="HE 3">HE 3</option>
+                <option value="HE 4">HE 4</option>
+                <option value="HE LAB">HE LAB</option>
+
+                <option value="CH 1">CH 1</option>
+                <option value="CH 2">CH 2</option>
+                <option value="CH 3">CH 3</option>
+                <option value="CAD">CAD</option>
+
+                <option value="CH 4">CH 4</option>
+                <option value="CH 5">CH 5</option>
+                <option value="CH 6">CH 6</option>
+                <option value="CH 7">CH 7</option>
+                <option value="LAB 1">LAB 1</option>
+                <option value="LAB 2">LAB 2</option>
               </select>
             </div>
           </div>
